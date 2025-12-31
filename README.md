@@ -88,9 +88,9 @@ h1 ffmpeg -re -stream_loop -1 -i video.mp4 -c:v libx264 -b:v 3M -maxrate 3M -buf
 
 When the channel signal is strong (simulated via GNU Radio slider or defaults), the SDN controller allocates full bandwidth (e.g., 5-10 Mbps). The video is clear and smooth.
 
-_Figure 2: Clear video stream under optimal network conditions._
+<!-- _Figure 2: Clear video stream under optimal network conditions._ -->
 
-![Clear video stream](imgs/clear_video.png)
+<!-- ![Clear video stream](imgs/clear_video.png) -->
 
 ### Adaptive Throttling (Low Bandwidth)
 
