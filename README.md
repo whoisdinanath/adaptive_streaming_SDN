@@ -36,6 +36,8 @@ Follow these steps to bring up the simulation environment.
 
 First, start the POX controller. This listener will manage the Mininet switches and handle QoS updates.
 
+*Note:* Adjust the path to your POX installation as necessary (e.g., `~/WorkspaceSDN/pox/pox.py`).
+
 ```bash
 sudo ~/WorkspaceSDN/pox/pox.py log.level --debug openflow.of_01 --port=6653 pox_controller
 
