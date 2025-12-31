@@ -105,7 +105,3 @@ _Figure 3: Visual artifacts and pixelation occurring when the controller enforce
 ## Contributing
 
 Open an issue or submit a pull request with improvements or bug fixes.
-
-## License
-
-This repository does not include a license file. Add one (for example MIT) if you want to allow others to reuse the code.
