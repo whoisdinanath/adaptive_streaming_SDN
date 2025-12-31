@@ -1,0 +1,60 @@
+# Byte-compiled / cached files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment directories
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Pytest / coverage
+.pytest_cache/
+htmlcov/
+coverage.xml
+
+# MyPy
+.mypy_cache/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Temporary/backups (common backup copies like index.html.1)
+*.bak
+*.orig
+*.tmp
+*.old
+*.html.*
+
+# Node modules (if any)
+node_modules/
+
+# Ignore system files
+Thumbs.db
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+video.mp4
+src/qos*
+

@@ -1,0 +1,275 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: default
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: noise_amp
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: ''
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '0.05'
+    stop: '1'
+    value: '0'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [664, 48.0]
+    rotation: 0
+    state: enabled
+- name: qpsk
+  id: variable_constellation
+  parameters:
+    comment: ''
+    const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
+    dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
+    npwr: '1.0'
+    precision: '8'
+    rot_sym: '4'
+    soft_dec_lut: None
+    sym_map: '[0, 1, 3, 2]'
+    type: calcdist
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [344, 12.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '32000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [200, 12]
+    rotation: 0
+    state: enabled
+- name: blocks_keep_one_in_n_0
+  id: blocks_keep_one_in_n
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    n: '32000'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [736, 544.0]
+    rotation: 180
+    state: enabled
+- name: blocks_throttle2_0
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 416.0]
+    rotation: 180
+    state: enabled
+- name: channels_dynamic_channel_model_0
+  id: channels_dynamic_channel_model
+  parameters:
+    K: '4.0'
+    LOS: 'False'
+    N: '8'
+    affinity: ''
+    alias: ''
+    cfo_maxdev: 1e3
+    cfo_stdev: '0.01'
+    comment: ''
+    delays: '[0.0, 0.1, 0.3]'
+    fD: '0'
+    mags: '[1.0, 0.99,1.0]'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_amp: noise_amp
+    ntaps: '1'
+    samp_rate: samp_rate
+    seed: '42'
+    sro_maxdev: 1e3
+    sro_stdev: '0.01'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [352, 244.0]
+    rotation: 0
+    state: enabled
+- name: digital_constellation_modulator_0
+  id: digital_constellation_modulator
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    constellation: qpsk
+    differential: 'True'
+    excess_bw: '0.35'
+    log: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_symbol: '2'
+    truncate: 'False'
+    verbose: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 256.0]
+    rotation: 0
+    state: enabled
+- name: digital_glfsr_source_x_0
+  id: digital_glfsr_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    degree: '16'
+    mask: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    repeat: 'True'
+    seed: '1'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 600.0]
+    rotation: 180
+    state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self, alpha=0.1):\n        gr.sync_block.__init__(self, \n\
+      \            name=\"Linear Bitrate Calc\", \n            in_sig=[np.complex64],\
+      \ \n            out_sig=[np.float32])\n        \n        # 1. DEFINITIONS\n\
+      \        self.pwr_min = 0.3       # Baseline Power (Slider = 0)\n        self.pwr_max\
+      \ = 1.3       # Max Power (Slider = 1)\n        \n        self.rate_max = 10000000.0\
+      \ # 10 Mbps\n        self.rate_min = 1000000.0  # 1 Mbps\n        \n       \
+      \ self.alpha = alpha       # Smoothing factor\n        self.avg_power = 0.0\
+      \     # State variable\n\n    def work(self, input_items, output_items):\n \
+      \       if len(input_items[0]) == 0: return 0\n            \n        # 2. CALCULATE\
+      \ POWER\n        inst_power = np.mean(np.abs(input_items[0])**2)\n        \n\
+      \        # 3. SMOOTHING\n        self.avg_power = (self.alpha * inst_power)\
+      \ + ((1 - self.alpha) * self.avg_power)\n        \n        # 4. MAPPING (The\
+      \ Fix)\n        # First, find where we are in the power range (0.0 to 1.0)\n\
+      \        # This value increases QUADRATICALLY (slow start, fast finish)\n  \
+      \      raw_factor = np.clip((self.avg_power - self.pwr_min) / (self.pwr_max\
+      \ - self.pwr_min), 0.0, 1.0)\n        \n        # We apply Square Root to \"\
+      Linearize\" it relative to the slider\n        # If raw_factor is 0.25 (25%\
+      \ power), sqrt(0.25) = 0.5 (50% slider)\n        linear_factor = np.sqrt(raw_factor)\n\
+      \        \n        # 5. CALCULATE RATE\n        # Now we use the linear_factor\n\
+      \        current_rate = self.rate_max - (linear_factor * (self.rate_max - self.rate_min))\n\
+      \        \n        # 6. ROUNDING\n        current_rate = round(current_rate\
+      \ / 100000) * 100000\n        \n        # DEBUG\n        print(f\"PWR: {self.avg_power:.2f}\
+      \ | FACTOR: {linear_factor:.2f} | RATE: {current_rate/1e6:.1f} Mbps\", end='\\\
+      r')\n\n        output_items[0][:] = current_rate\n        return len(output_items[0])"
+    affinity: ''
+    alias: ''
+    alpha: '0.1'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Linear Bitrate Calc', 'blk', [('alpha', '0.1')], [('0', 'complex',
+      1)], [('0', 'float', 1)], '', ['alpha'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [664, 424.0]
+    rotation: 0
+    state: enabled
+- name: zeromq_pub_sink_0
+  id: zeromq_pub_sink
+  parameters:
+    address: tcp://127.0.0.1:5555
+    affinity: ''
+    alias: ''
+    bind: 'True'
+    comment: ''
+    drop_on_hwm: 'True'
+    hwm: '-1'
+    key: BITRATE
+    pass_tags: 'False'
+    timeout: '100'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [488, 584.0]
+    rotation: 180
+    state: enabled
+
+connections:
+- [blocks_keep_one_in_n_0, '0', zeromq_pub_sink_0, '0']
+- [blocks_throttle2_0, '0', digital_constellation_modulator_0, '0']
+- [channels_dynamic_channel_model_0, '0', epy_block_0, '0']
+- [digital_constellation_modulator_0, '0', channels_dynamic_channel_model_0, '0']
+- [digital_glfsr_source_x_0, '0', blocks_throttle2_0, '0']
+- [epy_block_0, '0', blocks_keep_one_in_n_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.12.0
