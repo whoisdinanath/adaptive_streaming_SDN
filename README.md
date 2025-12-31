@@ -102,11 +102,6 @@ _Figure 3: Visual artifacts and pixelation occurring when the controller enforce
 
 ---
 
-## Notes and Recommended Workflow
-
-- **Git Ignore:** This repo includes a `.gitignore` to keep generated files and caches out of version control.
-- **GNU Radio:** Keep your `.grc` flowgraphs under `grc/` and avoid committing generated temp files.
-
 ## Contributing
 
 Open an issue or submit a pull request with improvements or bug fixes.
