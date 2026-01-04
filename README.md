@@ -13,18 +13,47 @@ A small demo repository combining adaptive video streaming utilities and an SDN-
 
 ## Repo Structure
 
-- `grc/` — GNU Radio Companion flowgraph and generated Python blocks.
-- `src/` — SDN controller and helper scripts (e.g. `pox_controller.py`, `qos_app.py`, `topo.py`).
-- `imgs/` — Images used in documentation or experiments.
-- `index.html` — Small HTML files used for captive portal or HTTP tests.
+```
+adaptive_streaming/
+├── grc/              # GNU Radio Companion flowgraph and signal processing
+│   ├── adaptive_bitrate.grc
+│   └── *.py          # Generated Python blocks
+├── java/             # Java SDN controller implementation
+│   ├── SDRListener.java
+│   ├── pom.xml
+│   └── README.md
+├── python/           # Python SDN controller implementations
+│   ├── pox_controller.py   # POX-based controller
+│   ├── topo.py             # Mininet topology
+│   ├── listen.py           # ZMQ listener utility
+│   └── README.md
+├── imgs/             # Documentation images
+└── video.mp4         # Test video file
+```
 
 ## Requirements
 
-- Python 3.8+ (adjust as needed for your environment).
-- **GNU Radio:** Required to run the signal processing blocks in `grc/`.
-- **Mininet:** For network emulation.
-- **POX Controller:** The SDN controller environment required by `src/pox_controller.py`.
-- **FFmpeg:** Installed on the host system for video streaming.
+- Python 3.8+ (for Python controller)
+- Java 11+ and Maven (for Java controller)
+- **GNU Radio:** Required to run the signal processing blocks in `grc/`
+- **Mininet:** For network emulation
+- **POX Controller:** SDN controller framework (for Python version)
+- **Open vSwitch:** For QoS enforcement
+- **FFmpeg/FFplay:** For video streaming and playback
+- **ZeroMQ:** For IPC between GRC and controller
+
+### Installation
+
+```bash
+# Python dependencies
+pip install pyzmq
+
+# Java dependencies (automatically handled by Maven)
+cd java && mvn clean package
+
+# System packages (Ubuntu/Debian)
+sudo apt install mininet openvswitch-switch ffmpeg
+```
 
 ---
 
@@ -34,14 +63,25 @@ Follow these steps to bring up the simulation environment.
 
 ### 1. Start the SDN Controller
 
-First, start the POX controller. This listener will manage the Mininet switches and handle QoS updates.
+Choose either the **Python** or **Java** controller:
 
-*Note:* Adjust the path to your POX installation as necessary (e.g., `~/WorkspaceSDN/pox/pox.py`).
+#### Option A: Python Controller (POX)
 
 ```bash
-sudo ~/WorkspaceSDN/pox/pox.py log.level --debug openflow.of_01 --port=6653 pox_controller
+# Copy controller to POX ext directory
+cp python/pox_controller.py ~/pox/ext/
 
+# Start POX
+sudo ~/pox/pox.py log.level --DEBUG openflow.of_01 --port=6653 pox_controller
 ```
+
+#### Option B: Java Controller
+
+````bash
+cd java
+java -jar tarpython/topo.py```
+
+Both controllers listen on ZMQ `tcp://127.0.0.1:5555` and update OVS QoS settings.
 
 ### 2. Start the Network Topology
 
@@ -50,7 +90,7 @@ In a new terminal window, launch the Mininet topology. This creates the virtual 
 ```bash
 sudo python3 src/topo.py
 
-```
+````
 
 ### 3. Run the GNU Radio Flowgraph (Optional)
 
